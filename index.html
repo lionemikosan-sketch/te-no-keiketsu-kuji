@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>手の経穴くじ｜取穴練習アプリ</title>
 <style>
   /* ============================================================
@@ -68,7 +68,7 @@
   .wrap{
     max-width:1120px;
     margin:0 auto;
-    padding:clamp(18px,3vw,40px) clamp(14px,3vw,32px) 56px;
+    padding:clamp(16px,3vw,40px) clamp(14px,3vw,32px) 48px;
     position:relative;
     z-index:1;
   }
@@ -81,11 +81,11 @@
     flex-wrap:wrap;
     align-items:flex-end;
     justify-content:space-between;
-    gap:18px 24px;
-    margin-bottom:22px;
+    gap:16px 24px;
+    margin-bottom:20px;
   }
 
-  .title-block{ min-width:240px; }
+  .title-block{ min-width:220px; }
 
   .eyebrow{
     display:inline-flex;
@@ -105,7 +105,7 @@
 
   h1{
     margin:0;
-    font-size:clamp(28px,4.4vw,46px);
+    font-size:clamp(26px,4.4vw,46px);
     font-weight:800;
     letter-spacing:0.04em;
     line-height:1.1;
@@ -127,7 +127,7 @@
     display:flex;
     flex-wrap:wrap;
     align-items:center;
-    gap:12px;
+    gap:10px;
   }
 
   .btn{
@@ -177,9 +177,9 @@
     flex-wrap:wrap;
     align-items:center;
     justify-content:space-between;
-    gap:12px 18px;
-    padding:14px 18px;
-    margin-bottom:26px;
+    gap:10px 18px;
+    padding:13px 18px;
+    margin-bottom:22px;
     border:1px solid var(--panel-line);
     border-radius:14px;
     background:var(--panel);
@@ -190,7 +190,7 @@
   .steps{
     display:flex;
     flex-wrap:wrap;
-    gap:10px 14px;
+    gap:8px 14px;
     align-items:center;
   }
   .step{
@@ -235,85 +235,67 @@
   }
 
   /* ============================================================
-     カードグリッド
+     カードグリッド（選択用デッキ）
      ============================================================ */
   .grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:clamp(12px,1.8vw,22px);
+    gap:clamp(10px,1.8vw,22px);
   }
 
   .card{
     position:relative;
     aspect-ratio:3/4;
-    perspective:1400px;
+    border-radius:var(--radius);
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
     outline:none;
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease);
   }
 
   /* 入場アニメーション */
-  .card.enter .card__inner{
-    animation:dealIn .55s var(--ease) backwards;
-  }
+  .card.enter{ animation:dealIn .55s var(--ease) backwards; }
   @keyframes dealIn{
     0%{ opacity:0; transform:translateY(26px) rotateX(-14deg) scale(0.92); }
     100%{ opacity:1; transform:translateY(0) rotateX(0) scale(1); }
   }
 
-  .card__inner{
-    position:absolute;
-    inset:0;
-    transform-style:preserve-3d;
-    transition:transform .72s var(--ease);
-    will-change:transform;
-  }
-  .card.is-flipped .card__inner{ transform:rotateY(180deg); }
-
-  /* タップ時の沈み込み */
-  .card.press .card__inner{ transition:transform .72s var(--ease), filter .2s; }
-  .card.press{ transform:scale(0.97); transition:transform .15s var(--ease); }
-
-  /* ホバーで少し浮く（裏でも表でも） */
   @media(hover:hover){
-    .card:hover .card__inner{ box-shadow:none; }
-    .card:hover{ transform:translateY(-6px); }
-    .card{ transition:transform .25s var(--ease); }
+    .card:hover{ transform:translateY(-6px); box-shadow:0 20px 40px -22px rgba(127,231,239,0.55); }
   }
+  .card:active{ transform:scale(0.97); }
+  .card:focus-visible{ box-shadow:0 0 0 2px var(--cyan); }
+
+  /* 確認済みカードの印 */
+  .card.viewed{ filter:saturate(0.8) brightness(0.92); }
+  .card .seen-badge{
+    position:absolute; top:8px; right:8px;
+    width:22px; height:22px;
+    display:none; place-items:center;
+    border-radius:50%;
+    font-size:13px; font-weight:800;
+    color:var(--bg-0);
+    background:linear-gradient(135deg,var(--cyan),var(--gold));
+    box-shadow:0 4px 12px -3px rgba(0,0,0,.6);
+    z-index:3;
+  }
+  .card.viewed .seen-badge{ display:grid; }
 
   .card__face{
     position:absolute;
     inset:0;
     border-radius:var(--radius);
-    backface-visibility:hidden;
-    -webkit-backface-visibility:hidden;
     overflow:hidden;
     border:1px solid var(--panel-line);
     box-shadow:var(--shadow);
     display:flex;
   }
-  .card__face--back{ transform:rotateY(180deg); }
 
-  /* めくり時の発光リング（効果音の代替視覚演出） */
-  .card.flash .card__inner::after{
-    content:"";
-    position:absolute; inset:-2px;
-    border-radius:calc(var(--radius) + 2px);
-    pointer-events:none;
-    box-shadow:0 0 0 1px rgba(127,231,239,0.6), 0 0 26px 4px rgba(127,231,239,0.4);
-    animation:ring .6s var(--ease) forwards;
-    z-index:5;
-  }
-  @keyframes ring{
-    0%{ opacity:0.9; }
-    100%{ opacity:0; }
-  }
-
-  /* ---- 面ごとの表示切替（data-mode で制御）---- */
+  /* ---- 面の表示切替（data-mode で制御）---- */
   .face-back,.face-name,.face-detail{ display:none; width:100%; height:100%; }
-  .card__face[data-mode="back"]   .face-back{ display:flex; }
-  .card__face[data-mode="name"]   .face-name{ display:flex; }
-  .card__face[data-mode="detail"] .face-detail{ display:flex; }
+  [data-mode="back"]   .face-back{ display:flex; }
+  [data-mode="name"]   .face-name{ display:flex; }
+  [data-mode="detail"] .face-detail{ display:flex; }
 
   /* ============================================================
      裏面デザイン
@@ -329,7 +311,7 @@
   }
   .face-back::before{ /* 内側の細い枠 */
     content:"";
-    position:absolute; inset:10px;
+    position:absolute; inset:9px;
     border:1px solid rgba(231,201,127,0.22);
     border-radius:12px;
     pointer-events:none;
@@ -341,31 +323,30 @@
   }
   .back-label{
     position:absolute;
-    bottom:18px; left:0; right:0;
+    bottom:14px; left:0; right:0;
     text-align:center;
-    font-size:11px;
+    font-size:10px;
     letter-spacing:0.4em;
     color:rgba(231,201,127,0.7);
     text-indent:0.4em;
   }
 
   /* ============================================================
-     1タップ目：経穴名
+     経穴名 面
      ============================================================ */
   .face-name{
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:14px;
-    padding:18px;
+    gap:16px;
+    padding:20px;
     text-align:center;
     background:
-      radial-gradient(120% 80% at 50% 0%, rgba(127,231,239,0.14), transparent 60%),
+      radial-gradient(120% 80% at 50% 0%, rgba(127,231,239,0.16), transparent 60%),
       linear-gradient(165deg, #101826, #0a0f18);
-    border-color:rgba(127,231,239,0.35);
   }
   .name-tag{
-    font-size:11px;
+    font-size:12px;
     letter-spacing:0.42em;
     color:var(--cyan);
     text-indent:0.42em;
@@ -373,119 +354,213 @@
   .name-main{
     font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","MS Mincho",serif;
     font-weight:600;
-    font-size:clamp(34px,6.2vw,58px);
+    font-size:clamp(40px,13vw,72px);
     line-height:1.05;
-    letter-spacing:0.06em;
+    letter-spacing:0.08em;
     color:#fff;
-    text-shadow:0 0 26px rgba(127,231,239,0.3);
+    text-shadow:0 0 30px rgba(127,231,239,0.35);
   }
   .name-hint{
-    margin-top:4px;
-    font-size:11.5px;
+    margin-top:6px;
+    font-size:12.5px;
     color:var(--faint);
     letter-spacing:0.06em;
   }
   .name-rule{
-    width:46px;height:2px;
+    width:54px;height:2px;
     background:linear-gradient(90deg,transparent,var(--cyan),transparent);
     border-radius:2px;
   }
 
   /* ============================================================
-     2タップ目：詳細
+     詳細 面
      ============================================================ */
   .face-detail{
     flex-direction:column;
-    padding:clamp(12px,1.6vw,18px);
+    padding:clamp(18px,5.2vw,26px);
     background:
-      radial-gradient(120% 70% at 50% -10%, rgba(231,201,127,0.12), transparent 60%),
+      radial-gradient(120% 70% at 50% -10%, rgba(231,201,127,0.14), transparent 60%),
       linear-gradient(165deg, #141b29, #0b1018);
-    border-color:rgba(231,201,127,0.32);
     text-align:left;
   }
   .detail-head{
     display:flex;
     align-items:baseline;
-    gap:8px;
-    padding-bottom:10px;
-    margin-bottom:10px;
+    gap:10px;
+    padding-bottom:13px;
+    margin-bottom:14px;
     border-bottom:1px solid rgba(255,255,255,0.08);
   }
   .detail-name{
     font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho",serif;
     font-weight:600;
-    font-size:clamp(20px,3.4vw,30px);
+    font-size:clamp(28px,8vw,38px);
     letter-spacing:0.04em;
     color:#fff;
     line-height:1;
   }
   .detail-yoketsu{
-    font-size:11px;
+    font-size:clamp(12px,3.4vw,14px);
     color:var(--gold-soft);
     letter-spacing:0.02em;
     margin-left:auto;
     text-align:right;
-    line-height:1.3;
-    max-width:50%;
+    line-height:1.35;
+    max-width:52%;
   }
-  .detail-yoketsu .lab{ display:block; color:var(--faint); font-size:9.5px; letter-spacing:0.16em; }
+  .detail-yoketsu .lab{ display:block; color:var(--faint); font-size:10px; letter-spacing:0.16em; margin-bottom:2px; }
 
   .detail-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:8px;
+    gap:10px;
     margin-bottom:auto;
   }
   .field{
-    background:rgba(255,255,255,0.035);
-    border:1px solid rgba(255,255,255,0.06);
-    border-radius:10px;
-    padding:8px 10px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:12px;
+    padding:11px 13px;
   }
   .field .lab{
-    font-size:9.5px;
+    font-size:11px;
     letter-spacing:0.16em;
     color:var(--cyan);
     display:block;
-    margin-bottom:3px;
+    margin-bottom:5px;
   }
   .field .val{
-    font-size:clamp(13px,1.7vw,15px);
+    font-size:clamp(16px,4.6vw,19px);
     font-weight:700;
     color:var(--text);
     line-height:1.3;
   }
 
   .advice{
-    margin-top:10px;
+    margin-top:14px;
     display:flex;
-    gap:8px;
-    padding:9px 11px;
-    border-radius:10px;
-    background:linear-gradient(180deg, rgba(231,201,127,0.10), rgba(231,201,127,0.03));
-    border:1px solid rgba(231,201,127,0.2);
+    gap:10px;
+    padding:12px 14px;
+    border-radius:12px;
+    background:linear-gradient(180deg, rgba(231,201,127,0.12), rgba(231,201,127,0.03));
+    border:1px solid rgba(231,201,127,0.22);
   }
-  .advice .ic{ color:var(--gold); flex:0 0 auto; font-size:13px; line-height:1.4; }
+  .advice .ic{ color:var(--gold); flex:0 0 auto; font-size:15px; line-height:1.45; }
   .advice .txt{
-    font-size:12px;
-    line-height:1.5;
+    font-size:clamp(13.5px,3.9vw,15.5px);
+    line-height:1.55;
     color:#e9eef4;
     letter-spacing:0.01em;
   }
 
-  .detail-hint{
-    margin-top:8px;
+  /* ============================================================
+     拡大オーバーレイ（スポットライト）
+     ============================================================ */
+  .overlay{
+    position:fixed; inset:0;
+    z-index:50;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    padding:max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+    background:rgba(4,6,10,0.68);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .35s var(--ease), visibility .35s var(--ease);
+  }
+  .overlay.show{ opacity:1; visibility:visible; }
+
+  .overlay__close{
+    position:absolute;
+    top:max(16px, env(safe-area-inset-top));
+    right:18px;
+    width:42px; height:42px;
+    border-radius:50%;
+    border:1px solid var(--panel-line);
+    background:rgba(255,255,255,0.06);
+    color:var(--text);
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+    display:grid; place-items:center;
+    transition:transform .2s var(--ease), background .2s, border-color .2s;
+  }
+  .overlay__close:hover{ background:rgba(255,255,255,0.12); border-color:rgba(127,231,239,0.5); transform:rotate(90deg); }
+
+  .spotlight{
+    position:relative;
+    width:min(86vw, 58.5vh, 430px);
+    aspect-ratio:3/4;
+    perspective:1700px;
+    cursor:pointer;
+    will-change:transform;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .spotlight__inner{
+    position:absolute;
+    inset:0;
+    transform-style:preserve-3d;
+    transition:transform .72s var(--ease);
+    will-change:transform;
+  }
+  .spotlight.flipped .spotlight__inner{ transform:rotateY(180deg); }
+
+  .spotlight__face{
+    position:absolute;
+    inset:0;
+    border-radius:24px;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    overflow:hidden;
+    border:1px solid rgba(127,231,239,0.28);
+    box-shadow:0 36px 90px -34px rgba(0,0,0,0.92),
+               0 0 40px -10px rgba(127,231,239,0.25);
+    display:flex;
+  }
+  .spotlight__face--back{ transform:rotateY(180deg); }
+
+  /* めくり時の発光リング（効果音の代替演出） */
+  .spotlight.flash .spotlight__inner::after{
+    content:"";
+    position:absolute; inset:-2px;
+    border-radius:26px;
+    pointer-events:none;
+    box-shadow:0 0 0 1px rgba(127,231,239,0.7), 0 0 34px 6px rgba(127,231,239,0.45);
+    animation:ring .6s var(--ease) forwards;
+    z-index:5;
+  }
+  @keyframes ring{ 0%{opacity:0.95;} 100%{opacity:0;} }
+
+  .overlay__hint{
+    font-size:13.5px;
+    color:var(--muted);
+    letter-spacing:0.04em;
     text-align:center;
-    font-size:10.5px;
-    color:var(--faint);
-    letter-spacing:0.05em;
+    min-height:1.2em;
+  }
+  .overlay__hint b{ color:var(--gold-soft); font-weight:700; }
+
+  .overlay__dots{ display:flex; gap:9px; align-items:center; }
+  .overlay__dots span{
+    width:9px; height:9px; border-radius:50%;
+    background:rgba(255,255,255,0.2);
+    transition:background .3s, transform .3s, box-shadow .3s;
+  }
+  .overlay__dots span.on{
+    background:var(--cyan);
+    transform:scale(1.25);
+    box-shadow:0 0 12px var(--cyan);
   }
 
   /* ============================================================
      フッター
      ============================================================ */
   footer{
-    margin-top:30px;
+    margin-top:26px;
     text-align:center;
     color:var(--faint);
     font-size:12px;
@@ -495,21 +570,36 @@
   footer .accent{ color:var(--muted); }
 
   /* ============================================================
-     レスポンシブ
+     縦画面 / スマホ最適化
      ============================================================ */
   @media(max-width:560px){
-    .infobar{ flex-direction:column; align-items:flex-start; }
-    .detail-grid{ grid-template-columns:1fr 1fr; }
+    header{ align-items:flex-start; }
     .toolbar{ width:100%; }
-    .btn{ flex:1; justify-content:center; }
+    .btn{ flex:1; justify-content:center; padding:11px 12px; font-size:13px; }
+    .infobar{ flex-direction:column; align-items:stretch; gap:12px; }
+    .status{ justify-content:flex-end; }
   }
   @media(max-width:380px){
-    .grid{ gap:9px; }
-    .detail-grid{ grid-template-columns:1fr; }
+    .grid{ gap:8px; }
+  }
+
+  /* 横向きスマホには縦推奨のヒント */
+  .rotate-hint{ display:none; }
+  @media (orientation:landscape) and (max-height:480px){
+    .rotate-hint{
+      display:flex; align-items:center; gap:8px;
+      position:fixed; left:50%; bottom:14px; transform:translateX(-50%);
+      z-index:60;
+      padding:9px 16px; border-radius:999px;
+      background:rgba(20,27,40,0.92);
+      border:1px solid var(--panel-line);
+      color:var(--gold-soft); font-size:12.5px; letter-spacing:0.04em;
+      box-shadow:var(--shadow);
+    }
   }
 
   @media (prefers-reduced-motion:reduce){
-    *{ animation-duration:0.01ms !important; transition-duration:0.1ms !important; }
+    *{ animation-duration:0.01ms !important; transition-duration:0.12s !important; }
   }
 </style>
 </head>
@@ -524,7 +614,7 @@
       </div>
       <div class="toolbar">
         <button class="btn" id="resetBtn" type="button">
-          <span class="ic">↺</span>全カードを裏に戻す
+          <span class="ic">↺</span>確認をリセット
         </button>
         <button class="btn btn--primary" id="shuffleBtn" type="button">
           <span class="ic">⤮</span>再シャッフル
@@ -535,15 +625,15 @@
     <!-- 使い方 + 状態表示 -->
     <div class="infobar">
       <div class="steps">
-        <span class="step"><span class="num">1</span><b>経穴名</b>を見る</span>
+        <span class="step"><span class="num">1</span>カードを選ぶと<b>拡大</b>表示</span>
         <span class="step-sep">›</span>
-        <span class="step"><span class="num">2</span><b>要穴・刺激方法</b>などを確認</span>
+        <span class="step"><span class="num">2</span><b>経穴名</b>を見て取穴を考える</span>
         <span class="step-sep">›</span>
-        <span class="step"><span class="num">3</span>裏面に戻る</span>
+        <span class="step"><span class="num">3</span>タップで<b>詳細</b>を確認</span>
       </div>
       <div class="status">
         <span class="dot"></span>
-        公開中 <span class="count" id="openCount">0</span> / 9
+        確認済み <span class="count" id="seenCount">0</span> / 9
       </div>
     </div>
 
@@ -551,10 +641,26 @@
     <div class="grid" id="grid" aria-label="経穴カード 9枚"></div>
 
     <footer>
-      <span class="accent">タップで状態が切り替わります。</span> 全25穴からランダムで9枚を抽出（重複なし）。<br>
+      <span class="accent">カードをタップすると大きく拡大して表示します。</span>
+      全25穴からランダムで9枚を抽出（重複なし）。<br>
       鍼灸学生向け・取穴練習用ツール
     </footer>
   </div>
+
+  <!-- 拡大オーバーレイ -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <button class="overlay__close" id="closeBtn" type="button" aria-label="閉じる">×</button>
+    <div class="spotlight" id="spotlight" role="dialog" aria-modal="true" aria-label="拡大カード">
+      <div class="spotlight__inner">
+        <div class="spotlight__face spotlight__face--front" data-mode="back"></div>
+        <div class="spotlight__face spotlight__face--back"  data-mode="back"></div>
+      </div>
+    </div>
+    <div class="overlay__dots" id="overlayDots"><span></span><span></span></div>
+    <div class="overlay__hint" id="overlayHint"></div>
+  </div>
+
+  <div class="rotate-hint">📱 縦画面でのご利用がおすすめです</div>
 
 <script>
 /* ================================================================
@@ -603,11 +709,9 @@ const BACK_ART = `
       <stop offset="1" stop-color="#7fe7ef" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <!-- 同心円 -->
   <circle cx="100" cy="105" r="64" fill="none" stroke="url(#lg)" stroke-opacity="0.30" stroke-width="1"/>
   <circle cx="100" cy="105" r="52" fill="none" stroke="#e7c97f" stroke-opacity="0.28" stroke-width="1" stroke-dasharray="2 6"/>
   <circle cx="100" cy="105" r="40" fill="none" stroke="#7fe7ef" stroke-opacity="0.22" stroke-width="1"/>
-  <!-- 経絡ライン（蛇行）と経穴ノード -->
   <path class="meridian" d="M100 30 C 60 70, 140 110, 100 150 C 70 180, 130 200, 100 235"
         fill="none" stroke="url(#lg)" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round"/>
   <g class="meridian">
@@ -617,7 +721,6 @@ const BACK_ART = `
     <circle cx="113" cy="200" r="9" fill="url(#glow)"/><circle cx="113" cy="200" r="2.6" fill="#bfeef3"/>
     <circle cx="100" cy="235" r="9" fill="url(#glow)"/><circle cx="100" cy="235" r="2.6" fill="#e7c97f"/>
   </g>
-  <!-- 中央の文字 -->
   <text x="100" y="120" text-anchor="middle"
         font-family="'Hiragino Mincho ProN','Yu Mincho',serif"
         font-size="58" fill="#fff" fill-opacity="0.10" font-weight="600">經</text>
@@ -625,7 +728,7 @@ const BACK_ART = `
 <span class="back-label">手 ・ 経 穴</span>
 `;
 
-/* 1枚分の中身（裏 / 名前 / 詳細）の HTML を生成 */
+/* 詳細・名前 面の中身を生成（拡大カード用） */
 function faceContent(p){
   return `
     <div class="face-back">${BACK_ART}</div>
@@ -633,7 +736,7 @@ function faceContent(p){
       <span class="name-tag">経 穴 名</span>
       <span class="name-rule"></span>
       <span class="name-main">${p.name}</span>
-      <span class="name-hint">もう一度タップで詳細</span>
+      <span class="name-hint">タップで詳細を確認</span>
     </div>
     <div class="face-detail">
       <div class="detail-head">
@@ -650,18 +753,31 @@ function faceContent(p){
         <span class="ic">⚠</span>
         <span class="txt">${p.advice}</span>
       </div>
-      <div class="detail-hint">タップで裏面に戻る</div>
     </div>`;
 }
 
 /* ================================================================
-   状態管理
+   要素参照 & 状態
    ================================================================ */
-const MODES = ["back","name","detail"];   // 0,1,2
-const grid = document.getElementById("grid");
-const openCountEl = document.getElementById("openCount");
+const MODES = ["back","name","detail"];      // 0,1,2
 
-let cards = [];   // {el, inner, front, back, state} の配列
+const grid       = document.getElementById("grid");
+const seenCountEl= document.getElementById("seenCount");
+const overlay    = document.getElementById("overlay");
+const spotlight  = document.getElementById("spotlight");
+const spotFront  = spotlight.querySelector(".spotlight__face--front");
+const spotBack   = spotlight.querySelector(".spotlight__face--back");
+const overlayHint= document.getElementById("overlayHint");
+const overlayDots= document.getElementById("overlayDots").children;
+
+let deck = [];          // 現在の9穴
+let cards = [];         // {el} の配列（グリッド）
+let seen = new Set();   // 確認済みカードの index
+
+let activeIdx = null;   // 拡大中のカード
+let sStep = 0;          // 拡大カードの状態 0:裏 1:名前 2:詳細
+let opening = false;    // 開く演出中フラグ
+let revealTimer = null;
 
 /* 重複なしで9枚を抽出（Fisher–Yates） */
 function pickNine(){
@@ -673,116 +789,186 @@ function pickNine(){
   return pool.slice(0, 9);
 }
 
-/* カードDOMを9枚生成 */
-function buildCards(){
+/* グリッド生成 */
+function buildGrid(){
   grid.innerHTML = "";
   cards = [];
   for(let i = 0; i < 9; i++){
     const card = document.createElement("div");
     card.className = "card";
     card.tabIndex = 0;
-    card.setAttribute("role","button");
-    card.dataset.state = "0";
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", "カードを引く");
     card.innerHTML = `
-      <div class="card__inner">
-        <div class="card__face card__face--front" data-mode="back"></div>
-        <div class="card__face card__face--back"  data-mode="back"></div>
+      <span class="seen-badge">✓</span>
+      <div class="card__face" data-mode="back">
+        <div class="face-back">${BACK_ART}</div>
       </div>`;
 
-    const obj = {
-      el: card,
-      inner: card.querySelector(".card__inner"),
-      front: card.querySelector(".card__face--front"),
-      back:  card.querySelector(".card__face--back"),
-      state: 0
-    };
-
-    const handler = () => flipCard(obj);
-    card.addEventListener("click", handler);
+    card.addEventListener("click", () => openSpotlight(i));
     card.addEventListener("keydown", (e) => {
-      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); handler(); }
+      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openSpotlight(i); }
     });
 
     grid.appendChild(card);
-    cards.push(obj);
+    cards.push({ el: card });
   }
 }
 
-/* 9穴を割り当て、すべて裏面にリセット（演出付き） */
+/* 9穴を配り直す（演出付き） */
 function dealPoints(animate = true){
-  const picks = pickNine();
+  deck = pickNine();
+  seen.clear();
   cards.forEach((c, i) => {
-    const html = faceContent(picks[i]);
-    c.front.innerHTML = html;
-    c.back.innerHTML  = html;
-    c.front.dataset.mode = "back";
-    c.back.dataset.mode  = "back";
-    c.state = 0;
-    c.el.dataset.state = "0";
-    c.el.classList.remove("is-flipped");
-
+    c.el.classList.remove("viewed");
     if(animate){
       c.el.classList.remove("enter");
-      c.inner.style.animationDelay = (i * 55) + "ms";
-      // リフロー強制でアニメ再生
-      void c.el.offsetWidth;
+      c.el.style.animationDelay = (i * 55) + "ms";
+      void c.el.offsetWidth;       // リフロー強制で再生
       c.el.classList.add("enter");
     }
   });
-  updateCount();
+  updateSeenCount();
 }
 
-/* カードをめくる：back → name → detail → back */
-function flipCard(c){
-  const next = (c.state + 1) % 3;
+/* ===== 拡大オーバーレイ ===== */
+function openSpotlight(idx){
+  if(activeIdx !== null) return;        // 多重オープン防止
+  activeIdx = idx;
+  const p = deck[idx];
 
-  // これから表に出てくる面を判定して、その面に新しい状態を設定
-  const willFlip = !c.el.classList.contains("is-flipped");
-  const incoming = willFlip ? c.back : c.front;
-  incoming.dataset.mode = MODES[next];
+  // 中身をセット（最初は裏面＝グリッドと同じ見た目）
+  spotFront.innerHTML = faceContent(p);
+  spotBack.innerHTML  = faceContent(p);
+  spotFront.dataset.mode = "back";
+  spotBack.dataset.mode  = "back";
+  spotlight.classList.remove("flipped", "flash");
+  sStep = 0;
+  opening = true;
 
-  c.el.classList.toggle("is-flipped");
-  c.state = next;
-  c.el.dataset.state = String(next);
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  updateOverlayUI();
 
-  // 視覚的な「めくり感」演出
-  c.el.classList.remove("flash");
-  void c.el.offsetWidth;
-  c.el.classList.add("flash");
-  c.el.classList.add("press");
-  setTimeout(() => c.el.classList.remove("press"), 160);
+  // タップしたカード位置から拡大（FLIP）
+  const src = cards[idx].el.getBoundingClientRect();
+  spotlight.style.transition = "none";
+  spotlight.style.transform  = "none";
+  spotlight.style.opacity    = "1";
+  const tgt = spotlight.getBoundingClientRect();
+  const dx = (src.left + src.width/2) - (tgt.left + tgt.width/2);
+  const dy = (src.top  + src.height/2) - (tgt.top  + tgt.height/2);
+  const sc = src.width / tgt.width;
+  spotlight.style.transform = `translate(${dx}px, ${dy}px) scale(${sc})`;
 
-  updateCount();
-}
-
-/* 公開中（裏面以外）の枚数を更新 */
-function updateCount(){
-  const open = cards.filter(c => c.state !== 0).length;
-  openCountEl.textContent = open;
-}
-
-/* 全カードを裏に戻す（割り当て穴は維持） */
-function resetAll(){
-  cards.forEach((c) => {
-    if(c.state === 0) return;
-    // 裏面に戻すために、出てくる面へ back を設定してからフリップ
-    const willFlip = !c.el.classList.contains("is-flipped");
-    const incoming = willFlip ? c.back : c.front;
-    incoming.dataset.mode = "back";
-    c.el.classList.toggle("is-flipped");
-    c.state = 0;
-    c.el.dataset.state = "0";
+  requestAnimationFrame(() => {
+    spotlight.style.transition = "transform .48s var(--ease)";
+    spotlight.style.transform  = "none";
   });
-  updateCount();
+
+  // 拡大しきったら経穴名を「めくって」見せる
+  clearTimeout(revealTimer);
+  revealTimer = setTimeout(() => { advance(); opening = false; }, 430);
+}
+
+/* 拡大カードの状態を1つ進める（裏→名前→詳細） */
+function advance(){
+  const next = sStep + 1;                 // 1:name / 2:detail
+  const willFlip = !spotlight.classList.contains("flipped");
+  const incoming = willFlip ? spotBack : spotFront;
+  incoming.dataset.mode = MODES[next];
+  spotlight.classList.toggle("flipped");
+  sStep = next;
+
+  // めくり演出
+  spotlight.classList.remove("flash");
+  void spotlight.offsetWidth;
+  spotlight.classList.add("flash");
+
+  if(next === 2 && activeIdx !== null){   // 詳細を見たら「確認済み」
+    seen.add(activeIdx);
+    cards[activeIdx].el.classList.add("viewed");
+    updateSeenCount();
+  }
+  updateOverlayUI();
+}
+
+/* 拡大カードのタップ：詳細まで進めたら閉じる */
+function tapSpotlight(){
+  if(opening) return;
+  if(sStep < 2) advance();
+  else closeSpotlight();
+}
+
+/* 閉じる（カード位置へ戻す） */
+function closeSpotlight(){
+  if(activeIdx === null) return;
+  clearTimeout(revealTimer);
+
+  const src = cards[activeIdx].el.getBoundingClientRect();
+  const tgt = spotlight.getBoundingClientRect();
+  const dx = (src.left + src.width/2) - (tgt.left + tgt.width/2);
+  const dy = (src.top  + src.height/2) - (tgt.top  + tgt.height/2);
+  const sc = src.width / tgt.width;
+
+  spotlight.style.transition = "transform .4s var(--ease), opacity .4s var(--ease)";
+  spotlight.style.transform  = `translate(${dx}px, ${dy}px) scale(${sc})`;
+  spotlight.style.opacity    = "0";
+
+  overlay.classList.remove("show");
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+
+  setTimeout(() => {
+    spotlight.classList.remove("flipped", "flash");
+    spotlight.style.transition = "none";
+    spotlight.style.transform  = "none";
+    spotlight.style.opacity    = "";
+    activeIdx = null;
+    sStep = 0;
+    opening = false;
+  }, 410);
+}
+
+/* ヒント文・ドットの更新 */
+function updateOverlayUI(){
+  if(sStep <= 1){
+    overlayHint.innerHTML = "経穴名から取穴をイメージ → <b>タップで詳細</b>";
+  }else{
+    overlayHint.innerHTML = "<b>もう一度タップ</b>で閉じてデッキに戻る";
+  }
+  overlayDots[0].classList.toggle("on", sStep <= 1);
+  overlayDots[1].classList.toggle("on", sStep === 2);
+}
+
+function updateSeenCount(){
+  seenCountEl.textContent = seen.size;
+}
+
+/* 確認済みの印だけリセット（同じ9枚のまま） */
+function resetSeen(){
+  seen.clear();
+  cards.forEach(c => c.el.classList.remove("viewed"));
+  updateSeenCount();
 }
 
 /* ================================================================
-   初期化 & イベント
+   イベント
    ================================================================ */
-document.getElementById("shuffleBtn").addEventListener("click", () => dealPoints(true));
-document.getElementById("resetBtn").addEventListener("click", resetAll);
+spotlight.addEventListener("click", (e) => { e.stopPropagation(); tapSpotlight(); });
+overlay.addEventListener("click", closeSpotlight);                 // 背景タップで閉じる
+document.getElementById("closeBtn").addEventListener("click", (e)=>{ e.stopPropagation(); closeSpotlight(); });
+document.getElementById("shuffleBtn").addEventListener("click", () => { closeSpotlight(); dealPoints(true); });
+document.getElementById("resetBtn").addEventListener("click", resetSeen);
+document.addEventListener("keydown", (e) => {
+  if(activeIdx === null) return;
+  if(e.key === "Escape") closeSpotlight();
+  else if(e.key === "Enter" || e.key === " "){ e.preventDefault(); tapSpotlight(); }
+});
 
-buildCards();
+/* 初期化 */
+buildGrid();
 dealPoints(true);
 </script>
 </body>
