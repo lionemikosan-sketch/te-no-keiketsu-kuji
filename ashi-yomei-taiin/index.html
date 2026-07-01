@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#fffaf3" />
     <meta
       name="description"
-      content="足の陽明胃経・足の太陰脾経の、膝から末端にある要穴を9×9のカードで楽しく覚える学習アプリです。"
+      content="足の陽明胃経・足の太陰脾経の、膝から末端にある18の要穴を重複なしのカードで楽しく覚える学習アプリです。"
     />
     <title>経穴くじ｜胃経・脾経の要穴</title>
     <link rel="manifest" href="./manifest.webmanifest" />
@@ -67,7 +67,7 @@
             <div class="draw-content">
               <p class="draw-kicker" id="drawKicker">TAP A CARD</p>
               <h2 id="drawTitle">どの経穴が<br class="mobile-only" />隠れているかな？</h2>
-              <p class="draw-reading" id="drawReading">81枚から、好きな一枚をタップ</p>
+              <p class="draw-reading" id="drawReading">18枚から、好きな一枚をタップ</p>
               <div class="answer-box" id="answerBox" hidden>
                 <span>要穴</span>
                 <p id="answerText"></p>
@@ -80,14 +80,14 @@
         <section class="deck-section" aria-labelledby="deckTitle">
           <div class="section-heading">
             <div>
-              <p class="section-kicker">9 × 9 ACUPOINT LOTTERY</p>
-              <h2 id="deckTitle">81枚の経穴くじ</h2>
+              <p class="section-kicker">18 ACUPOINTS · NO DUPLICATES</p>
+              <h2 id="deckTitle">18枚の経穴くじ</h2>
             </div>
             <div class="progress-pill" aria-label="要穴まで開いた枚数">
-              <span id="completedCount">0</span><small>/ 81</small>
+              <span id="completedCount">0</span><small>/ <span id="totalCount">18</span></small>
             </div>
           </div>
-          <div class="deck" id="deck" aria-label="9かける9の経穴カード"></div>
+          <div class="deck" id="deck" aria-label="重複なしの経穴カード"></div>
           <p class="deck-note">
             <span aria-hidden="true">☝</span>
             1回目で経穴名、同じカードの2回目で要穴が開きます

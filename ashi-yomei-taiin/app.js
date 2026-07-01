@@ -130,7 +130,7 @@ const POINTS = [
 const state = {
   filter: "all",
   deck: [],
-  stages: Array(81).fill(0),
+  stages: [],
   selectedIndex: null,
   soundEnabled: true,
 };
@@ -147,6 +147,7 @@ const elements = {
   answerBox: document.querySelector("#answerBox"),
   answerText: document.querySelector("#answerText"),
   completedCount: document.querySelector("#completedCount"),
+  totalCount: document.querySelector("#totalCount"),
   shuffleButton: document.querySelector("#shuffleButton"),
   soundButton: document.querySelector("#soundButton"),
   infoDialog: document.querySelector("#infoDialog"),
@@ -169,17 +170,8 @@ function shuffle(items) {
   return shuffled;
 }
 
-function createBalancedDeck(points) {
-  const deck = [];
-  const fullRounds = Math.floor(81 / points.length);
-  const remainder = 81 % points.length;
-
-  for (let round = 0; round < fullRounds; round += 1) {
-    deck.push(...shuffle(points));
-  }
-  deck.push(...shuffle(points).slice(0, remainder));
-
-  return shuffle(deck);
+function createUniqueDeck(points) {
+  return shuffle(points);
 }
 
 function currentPoints() {
@@ -224,7 +216,7 @@ function resetDrawPanel() {
   elements.drawCode.textContent = "?";
   elements.drawKicker.textContent = "TAP A CARD";
   elements.drawTitle.innerHTML = "どの経穴が<br class=\"mobile-only\" />隠れているかな？";
-  elements.drawReading.textContent = "81枚から、好きな一枚をタップ";
+  elements.drawReading.textContent = `${state.deck.length}枚から、好きな一枚をタップ`;
   elements.drawHint.textContent = "下のカードを選んでください";
   elements.answerBox.hidden = true;
   elements.answerText.textContent = "";
@@ -249,6 +241,7 @@ function updateDrawPanel(point, stage) {
 
 function updateProgress() {
   elements.completedCount.textContent = String(state.stages.filter((stage) => stage === 2).length);
+  elements.totalCount.textContent = String(state.deck.length);
 }
 
 function renderDeck() {
@@ -261,6 +254,7 @@ function renderDeck() {
     button.className = `lot-card${stage === 1 ? " is-name" : ""}${stage === 2 ? " is-answer" : ""}`;
     button.dataset.index = String(index);
     button.dataset.meridian = point.meridian;
+    button.dataset.code = point.code;
     button.setAttribute(
       "aria-label",
       stage === 0
@@ -307,12 +301,13 @@ function selectCard(index) {
 }
 
 function newDeck({ announce = true } = {}) {
-  state.deck = createBalancedDeck(currentPoints());
-  state.stages = Array(81).fill(0);
+  state.deck = createUniqueDeck(currentPoints());
+  state.stages = Array(state.deck.length).fill(0);
   state.selectedIndex = null;
+  elements.deck.setAttribute("aria-label", `重複なしの${state.deck.length}枚の経穴カード`);
   resetDrawPanel();
   renderDeck();
-  if (announce) showToast("81枚をまぜ直しました");
+  if (announce) showToast(`${state.deck.length}枚をまぜ直しました`);
 }
 
 function setFilter(filter) {
@@ -407,4 +402,4 @@ if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
   window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
 }
 
-export { POINTS, createBalancedDeck };
+export { POINTS, createUniqueDeck };

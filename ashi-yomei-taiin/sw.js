@@ -1,4 +1,4 @@
-const CACHE_NAME = "keiketsu-kuji-v2";
+const CACHE_NAME = "keiketsu-kuji-v3";
 const APP_SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./icon.svg", "./manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
