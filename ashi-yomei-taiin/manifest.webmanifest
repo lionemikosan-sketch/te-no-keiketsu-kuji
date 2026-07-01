@@ -1,0 +1,20 @@
+{
+  "name": "経穴くじ｜胃経・脾経の要穴",
+  "short_name": "経穴くじ",
+  "description": "足の陽明胃経・足の太陰脾経の要穴を9×9のカードで覚える学習アプリ",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fffefa",
+  "theme_color": "#fffaf3",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

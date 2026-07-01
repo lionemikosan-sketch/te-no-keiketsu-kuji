@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#fffaf3" />
+    <meta
+      name="description"
+      content="足の陽明胃経・足の太陰脾経の、膝から末端にある要穴を9×9のカードで楽しく覚える学習アプリです。"
+    />
+    <title>経穴くじ｜胃経・脾経の要穴</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="経穴くじ ホーム">
+          <span class="brand-mark" aria-hidden="true">穴</span>
+          <span>経穴くじ</span>
+        </a>
+        <div class="topbar-actions">
+          <button class="icon-button" id="soundButton" type="button" aria-pressed="true" aria-label="効果音をオフにする">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M5 9v6h4l5 4V5L9 9H5Zm11.5 3a4.5 4.5 0 0 0-1.5-3.35v6.7A4.5 4.5 0 0 0 16.5 12Z" />
+            </svg>
+          </button>
+          <button class="icon-button" id="infoButton" type="button" aria-label="収録経穴と出典を開く">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M11 10h2v7h-2v-7Zm0-3h2v2h-2V7Zm1-5a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <p class="eyebrow">膝から足先まで・全18穴</p>
+          <h1>
+            <span class="st-text">足の陽明胃経</span>と<br />
+            <span class="hero-second-line"><span class="sp-text">足の太陰脾経</span>の要穴</span>
+          </h1>
+          <p class="lead">好きなカードを選んで、二度タップ。<br />経穴名から要穴分類へ、記憶をつなごう。</p>
+        </section>
+
+        <section class="controls" aria-label="出題範囲">
+          <div class="filter-group" role="group" aria-label="経脈を選ぶ">
+            <button class="filter-chip is-active" type="button" data-filter="all" aria-pressed="true">両方</button>
+            <button class="filter-chip st-chip" type="button" data-filter="ST" aria-pressed="false">胃経</button>
+            <button class="filter-chip sp-chip" type="button" data-filter="SP" aria-pressed="false">脾経</button>
+          </div>
+          <button class="shuffle-button" id="shuffleButton" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="m18 16 4 3-4 3v-2h-2.5a5 5 0 0 1-4.1-2.15l-5.8-8.3A3 3 0 0 0 3.15 8H2V6h1.15a5 5 0 0 1 4.1 2.15l5.8 8.3A3 3 0 0 0 15.5 18H18v-2ZM18 2l4 3-4 3V6h-2.5a3 3 0 0 0-2.45 1.55l-1.5 2.15-1.22-1.75 1.07-1.8A5 5 0 0 1 15.5 4H18V2ZM3.15 18a3 3 0 0 0 2.45-1.55l1.54-2.2L8.36 16l-1.11 1.85A5 5 0 0 1 3.15 20H2v-2h1.15Z" />
+            </svg>
+            まぜ直す
+          </button>
+        </section>
+
+        <section class="draw-area" aria-live="polite">
+          <div class="draw-card is-empty" id="drawCard" tabindex="-1">
+            <div class="draw-card-top">
+              <span class="draw-step" id="drawStep">カードを1枚選ぼう</span>
+              <span class="draw-code" id="drawCode" aria-hidden="true">?</span>
+            </div>
+            <div class="draw-content">
+              <p class="draw-kicker" id="drawKicker">TAP A CARD</p>
+              <h2 id="drawTitle">どの経穴が<br class="mobile-only" />隠れているかな？</h2>
+              <p class="draw-reading" id="drawReading">81枚から、好きな一枚をタップ</p>
+              <div class="answer-box" id="answerBox" hidden>
+                <span>要穴</span>
+                <p id="answerText"></p>
+              </div>
+            </div>
+            <p class="draw-hint" id="drawHint">下のカードを選んでください</p>
+          </div>
+        </section>
+
+        <section class="deck-section" aria-labelledby="deckTitle">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">9 × 9 ACUPOINT LOTTERY</p>
+              <h2 id="deckTitle">81枚の経穴くじ</h2>
+            </div>
+            <div class="progress-pill" aria-label="要穴まで開いた枚数">
+              <span id="completedCount">0</span><small>/ 81</small>
+            </div>
+          </div>
+          <div class="deck" id="deck" aria-label="9かける9の経穴カード"></div>
+          <p class="deck-note">
+            <span aria-hidden="true">☝</span>
+            1回目で経穴名、同じカードの2回目で要穴が開きます
+          </p>
+        </section>
+
+        <section class="study-note">
+          <div class="study-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 5.5A3.5 3.5 0 0 1 6.5 2H11v16H6.5A3.5 3.5 0 0 0 3 21.5v-16Zm18 0A3.5 3.5 0 0 0 17.5 2H13v16h4.5a3.5 3.5 0 0 1 3.5 3.5v-16Z" /></svg>
+          </div>
+          <div>
+            <h2>このアプリについて</h2>
+            <p>鍼灸を学ぶ人のための暗記用教材です。治療・診断・セルフケアの指示を目的としたものではありません。</p>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>経穴名・国際コードはWHO標準、要穴分類は鍼灸教育資料を照合しています。</p>
+        <button type="button" id="footerInfoButton">収録経穴・出典を見る</button>
+      </footer>
+    </div>
+
+    <dialog class="info-dialog" id="infoDialog" aria-labelledby="infoTitle">
+      <div class="dialog-header">
+        <div>
+          <p class="section-kicker">ACUPOINT LIST & SOURCES</p>
+          <h2 id="infoTitle">収録経穴と出典</h2>
+        </div>
+        <button class="icon-button close-button" id="closeInfoButton" type="button" aria-label="閉じる">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4-6.3-6.3-6.3 6.3-1.4-1.4L9.2 12 2.9 5.7l1.4-1.4 6.3 6.3 6.3-6.3 1.4 1.4Z" /></svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <p class="source-intro">
+          「膝から末端」を、膝周囲から足趾までに位置する要穴として選定しました。梁丘（ST34）はご指定により収録しています。
+        </p>
+        <div class="point-tables" id="pointTables"></div>
+        <div class="sources">
+          <h3>参照資料</h3>
+          <ul>
+            <li>
+              <a href="https://iris.who.int/bitstream/handle/10665/353407/9789290613831-eng.pdf?sequence=1" target="_blank" rel="noreferrer">
+                WHO Standard Acupuncture Point Locations in the Western Pacific Region
+              </a>
+              <span>経穴の国際コード・標準名・位置</span>
+            </li>
+            <li>
+              <a href="https://mr.meiji-u.ac.jp/mr_keiketsu/keiraku/ST.html" target="_blank" rel="noreferrer">
+                明治国際医療大学「MR経穴」足の陽明胃経
+              </a>
+              <span>経穴名・読み・要穴分類</span>
+            </li>
+            <li>
+              <a href="https://mr.meiji-u.ac.jp/mr_keiketsu/keiraku/SP.html" target="_blank" rel="noreferrer">
+                明治国際医療大学「MR経穴」足の太陰脾経
+              </a>
+              <span>経穴名・読み・要穴分類</span>
+            </li>
+            <li>
+              <a href="https://mr.meiji-u.ac.jp/mr_keiketsu/yoketsu/kago.html" target="_blank" rel="noreferrer">
+                明治国際医療大学「MR経穴」下合穴
+              </a>
+              <span>足三里・上巨虚・下巨虚の下合穴分類</span>
+            </li>
+          </ul>
+        </div>
+        <p class="disclaimer">
+          本アプリは学習専用です。身体への刺鍼・施灸には専門知識と国家資格が必要です。
+        </p>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
