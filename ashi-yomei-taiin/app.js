@@ -399,7 +399,7 @@ buildPointTables();
 newDeck({ announce: false });
 
 if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
-  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=4").catch(() => {}));
 }
 
 export { POINTS, createUniqueDeck };

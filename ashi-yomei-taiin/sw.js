@@ -1,5 +1,12 @@
-const CACHE_NAME = "keiketsu-kuji-v3";
-const APP_SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./icon.svg", "./manifest.webmanifest"];
+const CACHE_NAME = "keiketsu-kuji-v4";
+const APP_SHELL = [
+  "./",
+  "./index.html",
+  "./styles.css?v=4",
+  "./app.js?v=4",
+  "./icon.svg",
+  "./manifest.webmanifest",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
